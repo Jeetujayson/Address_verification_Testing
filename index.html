@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Banking Management App</title>
+    <title>Address Verification System</title>
   </head>
   <body>
-    <h1>Banking Management App</h1>
+    <h1>Address Verification System</h1>
     <table id="accounts">
       <tr>
         <th>Account Number</th>
@@ -15,12 +15,33 @@
     <button id="start" onclick="startTransaction()">Start</button>
     <button id="stop" onclick="stopTransaction()" disabled>Stop</button>
     <br /><br />
-    <p>Transaction Counter: <span id="counter"></span></p>
-    <script>
-      var interval;
-      var counter = 0;
-      var accounts;
+    <p>Last Transacted Amount: <span id="last-amount"></span></p>
+    <p>Time taken by last transaction: <span id="time-taken"></span></p>
 
+    <p>Total Balance: <span id="total-balance"></span></p>
+
+    <p>Absolute Transaction Counter: <span id="counter"></span></p>
+    <p>
+      Relative Transaction Counter (Reset @ 999,999):
+      <span id="counter-1"></span>
+    </p>
+    <p>E notation:(Reset @ 9.999999e293 to 1.000000e-7) <span id="counter-2"></span></p>
+    <p>Aleph null:(Reset @ 293 to 1) <span id="counter-3"></span></p>
+    <p>Factorial: <span id="counter-4"></span></p>
+
+    <script>
+      var startTime;
+      var endTime;
+      var interval;
+      var accounts;
+      var counter = 0;
+      var firstCounter = 0;
+      var secondCounter = 0;
+      var thirdCounter = 0;
+      var fourthCounter = 0;
+      var totalBalance = 0;
+      var e_notation = 0;
+      var formattedNumber = 0;
       // Read the accounts.csv file and display it in the table
       function readCSV() {
         var xhr = new XMLHttpRequest();
@@ -48,9 +69,12 @@
 
       // Start the auto transaction
       function startTransaction() {
+        startTime = Date.now();
+        totalBalance = 0;
         document.getElementById("start").disabled = true;
         document.getElementById("stop").disabled = false;
-        interval = setInterval(transact, 1);
+        interval = setInterval(transact, 0.000000000001);
+        // interval = setInterval(transact, 10);
       }
 
       // Stop the auto transaction
@@ -61,17 +85,28 @@
       }
 
       // Perform a transaction between two random accounts
+      // var secondCounter = 0;
+
       function transact() {
         var account1 = Math.floor(Math.random() * 10) + 1;
         var account2 = Math.floor(Math.random() * 10) + 1;
         while (account1 == account2) {
           account2 = Math.floor(Math.random() * 10) + 1;
         }
+
         var account1Data = accounts[account1].split(",");
         var account2Data = accounts[account2].split(",");
-        var amount = Math.floor(Math.random() * 100) + 1;
-        var newBalance1 = parseInt(account1Data[1]) - amount;
-        var newBalance2 = parseInt(account2Data[1]) + amount;
+        var account1Balance = parseFloat(account1Data[1]);
+        var account2Balance = parseFloat(account2Data[1]);
+        var amount = Math.random() * (account1Balance - 1) + 1;
+        amount = parseFloat(amount.toFixed(2));
+        document.getElementById("last-amount").innerHTML = amount;
+        // var endTime = Date.now();
+        // var timeTaken = endTime - startTime + "ms";
+        // document.getElementById("time-taken").innerHTML = timeTaken;
+
+        var newBalance1 = account1Balance - amount;
+        var newBalance2 = account2Balance + amount;
         account1Data[1] = newBalance1;
         account2Data[1] = newBalance2;
         accounts[account1] = account1Data.join(",");
@@ -85,16 +120,91 @@
           ) {
             var balance = accounts[i].split(",")[1];
             rows[i].childNodes[1].innerHTML = balance;
+            totalBalance += parseFloat(balance);
           }
         }
         counter++;
-        if (counter > 999) {
-          document.getElementById("counter").innerHTML =
-            counter.toExponential();
+
+        // if (counter >= 99) {
+        //   var exponent = Math.floor(counter / 1000);
+        //   var firstCounter = 1;
+        //   secondCounter = secondCounter + 1;
+        //   // (secondCounter >= 293)
+        //   if (secondCounter >= 293) {
+        //     thirdCounter = thirdCounter + 1;
+        //     secondCounter = 1;
+        //     if (thirdCounter >= 293) {
+        //       fourthCounter = fourthCounter + 1;
+        //       thirdCounter = 1;
+        //     }
+        //   }
+
+
+        // Display The Absolute Counter
+        document.getElementById("counter").innerHTML = counter;
+
+        // Display The Relative Counter
+        firstCounter++;
+        if (firstCounter >= 9) {
+        // if (firstCounter >= 999999) {
+          document.getElementById("counter-1").innerHTML = firstCounter;
+          firstCounter = 0;
         } else {
-          document.getElementById("counter").innerHTML = counter;
+          document.getElementById("counter-1").innerHTML = firstCounter;
         }
+
+
+        // Display The eNotation
+        secondCounter++;
+        function toEnotation(num, decimalPlaces) {
+          e_notation = ((secondCounter / 10).toExponential(decimalPlaces));
+          // e_notation = ((secondCounter / 10000000).toExponential(decimalPlaces));
+        }
+        toEnotation(10, 6);
+
+        // if (e_notation >= 9.999999e293){
+        if (e_notation >= 9.9e1){
+          secondCounter = firstCounter;
+          thirdCounter++
+          document.getElementById("counter-2").innerHTML = e_notation;
+        }else {
+          document.getElementById("counter-2").innerHTML = e_notation;
+        }
+
+        // document.getElementById("counter-2").innerHTML = e_notation;
+
+        // Display The Aleph null
+        if (thirdCounter >= 3){
+        // if (thirdCounter >= 293){
+          thirdCounter = 1
+          fourthCounter++
+          document.getElementById("counter-3").innerHTML = thirdCounter;
+        } else {
+            document.getElementById("counter-3").innerHTML = thirdCounter;
       }
+
+      // Display The Factorial
+        var digits = counter.toString().length;
+        var formattedNumber = "9".repeat(Math.max(0, digits));
+          document.getElementById("counter-4").innerHTML = formattedNumber;
+
+        // recalculate total balance
+        totalBalance = 0;
+        for (var i = 1; i < accounts.length; i++) {
+          var account = accounts[i].split(",");
+          var balance = parseFloat(account[1]);
+          totalBalance += balance;
+        }
+        // update total balance displayed on the page
+        document.getElementById("total-balance").innerHTML =
+          totalBalance.toFixed(2);
+
+        var endTime = Date.now();
+        var timeTaken = endTime - startTime;
+        document.getElementById("time-taken").innerHTML = timeTaken + "ms";
+        startTime = Date.now();
+      }
+
       // Call the readCSV function to display the accounts table
       readCSV();
     </script>
