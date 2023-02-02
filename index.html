@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Address Verification System</title>
+    <title>Testing With Lower Limits and Breakout Number</title>
   </head>
   <body>
-    <h1>Address Verification System</h1>
+    <h1>Testing With Lower Limits and Breakout Number</h1>
     <table id="accounts">
       <tr>
         <th>Account Number</th>
@@ -22,11 +22,11 @@
 
     <p>Absolute Transaction Counter: <span id="counter"></span></p>
     <p>
-      Relative Transaction Counter (Reset @ 999,999):
+      Relative Transaction Counter (Reset @ 9):
       <span id="counter-1"></span>
     </p>
-    <p>E notation:(Reset @ 9.999999e293 to 1.000000e-7) <span id="counter-2"></span></p>
-    <p>Aleph null:(Reset @ 293 to 1) <span id="counter-3"></span></p>
+    <p>E notation:(Reset @ 9.99e1 ) <span id="counter-2"></span></p>
+    <p>Aleph null:(Reset @ 3 to 1) <span id="counter-3"></span></p>
     <p>Factorial: <span id="counter-4"></span></p>
 
     <script>
@@ -73,7 +73,7 @@
         totalBalance = 0;
         document.getElementById("start").disabled = true;
         document.getElementById("stop").disabled = false;
-        interval = setInterval(transact, 0.000000000001);
+        interval = setInterval(transact, 100);
         // interval = setInterval(transact, 10);
       }
 
@@ -155,7 +155,7 @@
 
 
         // Display The eNotation
-        secondCounter++;
+        
         function toEnotation(num, decimalPlaces) {
           e_notation = ((secondCounter / 10).toExponential(decimalPlaces));
           // e_notation = ((secondCounter / 10000000).toExponential(decimalPlaces));
@@ -168,6 +168,7 @@
           thirdCounter++
           document.getElementById("counter-2").innerHTML = e_notation;
         }else {
+          secondCounter++;
           document.getElementById("counter-2").innerHTML = e_notation;
         }
 
@@ -210,3 +211,4 @@
     </script>
   </body>
 </html>
+
