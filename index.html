@@ -73,7 +73,7 @@
         totalBalance = 0;
         document.getElementById("start").disabled = true;
         document.getElementById("stop").disabled = false;
-        interval = setInterval(transact, 10);
+        interval = setInterval(transact, 0.00000001);
         // interval = setInterval(transact, 10);
       }
 
@@ -167,6 +167,7 @@
         if (e_notation >= 9.9e1){
           secondCounter = firstCounter;
           thirdCounter++
+          secondCounter++;
           document.getElementById("counter-2").innerHTML = e_notation;
         }else {
           secondCounter++;
